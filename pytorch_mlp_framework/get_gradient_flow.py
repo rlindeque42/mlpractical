@@ -5,7 +5,7 @@ from torchvision import transforms
 
 import mlp.data_providers as data_providers
 from pytorch_mlp_framework.arg_extractor import get_args
-from pytorch_mlp_framework.experiment_builder2 import ExperimentBuilder2
+from experiment_builder2 import ExperimentBuilder2
 from pytorch_mlp_framework.model_architectures import *
 import os 
 # os.environ["CUDA_VISIBLE_DEVICES"]="0"
