@@ -67,5 +67,3 @@ conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     test_data=test_data_loader)  # build an experiment object
 para_names = conv_experiment.run_mini_experiment()  # run experiment and return experiment metrics
 print(para_names)
-
-# testing 3
