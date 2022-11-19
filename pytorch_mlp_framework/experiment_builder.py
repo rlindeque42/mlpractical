@@ -112,9 +112,14 @@ class ExperimentBuilder(nn.Module):
             self.starting_epoch = 0
 
     def get_num_parameters(self):
-        total_num_params = 0
-        for param in self.parameters():
-            total_num_params += np.prod(param.shape)
+
+        #total_num_params = 0
+        #for param in self.parameters():
+         #   total_num_params += np.prod(param.shape)
+
+        total_num_params = []
+        for param in self.model.named_parameters():
+            total_num_params.append(param)
 
         return total_num_params
 
@@ -170,9 +175,6 @@ class ExperimentBuilder(nn.Module):
         for name, value in named_parameters():
             para_names.append(name)
         return para_names
-    
-    def run_mini_experiment(self):
-        return (self.testing(self.model.named_parameters()))
 
     def run_train_iter(self, x, y):
         
