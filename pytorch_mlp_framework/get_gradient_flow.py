@@ -65,5 +65,6 @@ conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     continue_from_epoch=args.continue_from_epoch,
                                     train_data=train_data_loader, val_data=val_data_loader,
                                     test_data=test_data_loader)  # build an experiment object
-for name, param in custom_conv_net.named_parameters():
-   print(name)
+plt = conv_experiment.plot_grad_flow()  # run experiment and return experiment metrics
+#for name, param in custom_conv_net.named_parameters():
+ #  print(name)

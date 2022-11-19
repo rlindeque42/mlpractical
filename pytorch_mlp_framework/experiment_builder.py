@@ -155,25 +155,17 @@ class ExperimentBuilder(nn.Module):
         """
         ########################################
         
-        para_names = []
-        for name, value in named_parameters():
-            para_names.append(name)
-        return para_names
+        for n, p in named_parameters:
+            if(p.requires_grad) and ("bias" not in n):
+                layers.append(n)
+                all_grads.append(p.grad.abs().mean())
         ########################################
             
         
-        #plt = self.plot_func_def(all_grads, layers)
+        plt = self.plot_func_def(all_grads, layers)
         
-        #return plt
+        return plt
 
-    def testing(self, named_parameters):
-        para_names = []
-        for name, value in named_parameters():
-            para_names.append(name)
-        return para_names
-    
-    def run_mini_experiment(self):
-        return self.testing(self.model.named_parameters())
 
     def run_train_iter(self, x, y):
         
