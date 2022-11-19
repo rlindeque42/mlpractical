@@ -164,7 +164,7 @@ class ExperimentBuilder(nn.Module):
         #plt = self.plot_func_def(all_grads, layers)
         
         #return plt
-    """
+
     def testing(self, named_parameters):
         para_names = []
         for name, value in named_parameters():
@@ -173,8 +173,7 @@ class ExperimentBuilder(nn.Module):
     
     def run_mini_experiment(self):
         return (self.testing(self.model.named_parameters()))
-    """
-    
+
     def run_train_iter(self, x, y):
         
         self.train()  # sets model to training mode (in case batch normalization or other methods have different procedures for training and evaluation)
