@@ -240,6 +240,9 @@ class ExperimentBuilder(nn.Module):
         state = torch.load(f=os.path.join(model_save_dir, "{}_{}".format(model_save_name, str(model_idx))))
         self.load_state_dict(state_dict=state['network'])
         return state, state['best_val_model_idx'], state['best_val_model_acc']
+    
+    def run_mini_experiment(self):
+        return (self.testing(self.model.named_parameters()))
 
     def run_experiment(self):
         """
