@@ -5,7 +5,7 @@ from torchvision import transforms
 
 import mlp.data_providers as data_providers
 from pytorch_mlp_framework.arg_extractor import get_args
-from pytorch_mlp_framework.experiment_builder import ExperimentBuilder
+from pytorch_mlp_framework.experiment_builder2 import ExperimentBuilder2
 from pytorch_mlp_framework.model_architectures import *
 import os 
 # os.environ["CUDA_VISIBLE_DEVICES"]="0"
@@ -57,7 +57,7 @@ custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in thi
     processing_block_type=processing_block_type,
     dimensionality_reduction_block_type=dim_reduction_block_type)
 
-conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
+conv_experiment = ExperimentBuilder2(network_model=custom_conv_net,
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
                                     weight_decay_coefficient=args.weight_decay_coefficient,
@@ -66,4 +66,4 @@ conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     train_data=train_data_loader, val_data=val_data_loader,
                                     test_data=test_data_loader)  # build an experiment object
 para_names = conv_experiment.get_num_parameters()  # run experiment and return experiment metrics
-print("hello" + str(para_names))
+print("Parameter names: " + str(para_names))
