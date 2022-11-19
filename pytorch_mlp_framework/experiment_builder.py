@@ -113,13 +113,9 @@ class ExperimentBuilder(nn.Module):
 
     def get_num_parameters(self):
 
-        #total_num_params = 0
-        #for param in self.parameters():
-         #   total_num_params += np.prod(param.shape)
-
-        total_num_params = []
-        for param in self.model.named_parameters():
-            total_num_params.append(param)
+        total_num_params = 0
+        for param in self.parameters():
+            total_num_params += np.prod(param.shape)
 
         return total_num_params
 
