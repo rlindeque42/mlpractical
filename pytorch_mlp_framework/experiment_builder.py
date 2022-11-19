@@ -140,7 +140,6 @@ class ExperimentBuilder(nn.Module):
         
         return plt
         
-    #temp
     def plot_grad_flow(self, named_parameters):
         """
         The function is being called in Line 298 of this file. 
@@ -155,14 +154,17 @@ class ExperimentBuilder(nn.Module):
         """
         ########################################
         
-        
+        para_names = []
+        for name, value in named_parameters():
+            para_names.append(name)
+        return para_names
         ########################################
             
         
-        plt = self.plot_func_def(all_grads, layers)
+        #plt = self.plot_func_def(all_grads, layers)
         
-        return plt
-    
+        #return plt
+    """
     def testing(self, named_parameters):
         para_names = []
         for name, value in named_parameters():
@@ -171,7 +173,7 @@ class ExperimentBuilder(nn.Module):
     
     def run_mini_experiment(self):
         return (self.testing(self.model.named_parameters()))
-    
+    """
     
     def run_train_iter(self, x, y):
         
