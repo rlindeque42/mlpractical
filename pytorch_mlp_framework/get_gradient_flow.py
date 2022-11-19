@@ -65,5 +65,5 @@ conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
                                     continue_from_epoch=args.continue_from_epoch,
                                     train_data=train_data_loader, val_data=val_data_loader,
                                     test_data=test_data_loader)  # build an experiment object
-para_names = conv_experiment.run_mini_experiment()  # run experiment and return experiment metrics
+para_names = conv_experiment.get_num_parameters()  # run experiment and return experiment metrics
 print(para_names)
