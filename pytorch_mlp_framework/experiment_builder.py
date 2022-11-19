@@ -140,7 +140,7 @@ class ExperimentBuilder(nn.Module):
         
         return plt
         
-    #temp
+    #temp1
     def plot_grad_flow(self, named_parameters):
         """
         The function is being called in Line 298 of this file. 
