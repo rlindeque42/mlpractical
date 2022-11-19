@@ -171,6 +171,9 @@ class ExperimentBuilder(nn.Module):
         for name, value in named_parameters():
             para_names.append(name)
         return para_names
+    
+    def run_mini_experiment(self):
+        return self.testing(self.model.named_parameters())
 
     def run_train_iter(self, x, y):
         
