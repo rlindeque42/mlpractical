@@ -154,7 +154,7 @@ class ExperimentBuilder(nn.Module):
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
         ########################################
-
+        print("called")
         # Running through the names and parameters in named_parmeters
         for name, para in named_parameters:
 
@@ -249,7 +249,7 @@ class ExperimentBuilder(nn.Module):
         """
         total_losses = {"train_acc": [], "train_loss": [], "val_acc": [],
                         "val_loss": []}  # initialize a dict to keep the per-epoch metrics
-        for i, epoch_idx in enumerate(range(self.starting_epoch, 10)):#self.num_epochs)):
+        for i, epoch_idx in enumerate(range(self.starting_epoch, self.num_epochs)):
             epoch_start_time = time.time()
             current_epoch_losses = {"train_acc": [], "train_loss": [], "val_acc": [], "val_loss": []}
             self.current_epoch = epoch_idx
