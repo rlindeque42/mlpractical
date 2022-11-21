@@ -288,6 +288,7 @@ class ExperimentBuilder(nn.Module):
             epoch_elapsed_time = time.time() - epoch_start_time  # calculate time taken for epoch
             epoch_elapsed_time = "{:.4f}".format(epoch_elapsed_time)
             print("Epoch {}:".format(epoch_idx), out_string, "epoch time", epoch_elapsed_time, "seconds")
+            print("Test")
             self.state['model_epoch'] = epoch_idx
             self.save_model(model_save_dir=self.experiment_saved_models,
                             # save model and best val idx and best val acc, using the model dir, model name and model idx
