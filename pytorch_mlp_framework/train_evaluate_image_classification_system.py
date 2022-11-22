@@ -52,7 +52,7 @@ elif args.block_type == 'batch_norm':
     dim_reduction_block_type = ConvDimReducBlockBatchNorm
 elif args.block_type == 'batch_norm_res_net':
     processing_block_type = ConvProcessBlockBNRC
-    dim_reduction_block_type = ConvDimReducBlockBNRC
+    dim_reduction_block_type = ConvolutionalDimensionalityReductionBlock
 else:
     raise ModuleNotFoundError
 
