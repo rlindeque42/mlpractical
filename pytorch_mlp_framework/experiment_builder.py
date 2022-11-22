@@ -155,7 +155,6 @@ class ExperimentBuilder(nn.Module):
         """
         ########################################
         # Running through the names and parameters in named_parmeters
-        print("I've been called")
         for name, para in named_parameters:
 
             # If the parameter had a gradient 
@@ -304,7 +303,7 @@ class ExperimentBuilder(nn.Module):
             
             ################################################################
             ##### Plot Gradient Flow at each Epoch during Training  ######
-            print("Generating Gradient Flow Plot at epoch EDIT MADE {}".format(epoch_idx))
+            print("Generating Gradient Flow Plot at epoch {}".format(epoch_idx))
             plt = self.plot_grad_flow(self.model.named_parameters())
             if not os.path.exists(os.path.join(self.experiment_saved_models, 'gradient_flow_plots')):
                 os.mkdir(os.path.join(self.experiment_saved_models, 'gradient_flow_plots'))
