@@ -79,6 +79,7 @@ class ExperimentBuilder(nn.Module):
                                                                             eta_min=0.00002)
         # Generate the directory names
         self.experiment_folder = os.path.abspath(experiment_name)
+        print("does happen")
         self.experiment_logs = os.path.abspath(os.path.join(self.experiment_folder, "result_outputs"))
         self.experiment_saved_models = os.path.abspath(os.path.join(self.experiment_folder, "saved_models"))
 
