@@ -340,6 +340,9 @@ class ConvolutionalNetwork(nn.Module):
         self.logit_linear_layer.reset_parameters()
 
 class ConvProcessBlockBatchNorm(nn.Module):
+    """
+    This convolutional block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    """
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
         super(ConvolutionalProcessingBlock, self).__init__()
 
@@ -363,7 +366,6 @@ class ConvProcessBlockBatchNorm(nn.Module):
         # This is the first BatchNorm layer which takes it's number of features as the number of filters
         self.conv0_bn=nn.BatchNorm2d(num_features = self.num_filters)
         
-
         out = self.layer_dict['conv_0'].forward(out)
         
         out = F.leaky_relu(self.conv0_bn(out))
@@ -371,10 +373,12 @@ class ConvProcessBlockBatchNorm(nn.Module):
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
                                               padding=self.padding, stride=1)
+
         # And this is the second Batch Norm layer
         self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
 
         out = self.layer_dict['conv_1'].forward(out)
+
         out = F.leaky_relu(self.conv1_bn(out))
 
         print(out.shape)
@@ -383,10 +387,12 @@ class ConvProcessBlockBatchNorm(nn.Module):
         out = x
 
         out = self.layer_dict['conv_0'].forward(out)
+
         # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv0_bn(out))
 
         out = self.layer_dict['conv_1'].forward(out)
+        
         # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv1_bn(out))
 
