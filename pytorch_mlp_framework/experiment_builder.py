@@ -79,7 +79,6 @@ class ExperimentBuilder(nn.Module):
                                                                             eta_min=0.00002)
         # Generate the directory names
         self.experiment_folder = os.path.abspath(experiment_name)
-        print("does happen")
         self.experiment_logs = os.path.abspath(os.path.join(self.experiment_folder, "result_outputs"))
         self.experiment_saved_models = os.path.abspath(os.path.join(self.experiment_folder, "saved_models"))
 
@@ -87,11 +86,10 @@ class ExperimentBuilder(nn.Module):
         self.best_val_model_idx = 0
         self.best_val_model_acc = 0.
 
-        if not os.path.exists(self.experiment_folder):  # If experiment directory does not exist
-            print("should happen")
-            os.mkdir(self.experiment_folder)  # create the experiment directory
-            os.mkdir(self.experiment_logs)  # create the experiment log directory
-            os.mkdir(self.experiment_saved_models)  # create the experiment saved models directory
+        #if not os.path.exists(self.experiment_folder):  # If experiment directory does not exist
+        os.mkdir(self.experiment_folder)  # create the experiment directory
+        os.mkdir(self.experiment_logs)  # create the experiment log directory
+        os.mkdir(self.experiment_saved_models)  # create the experiment saved models directory
 
         self.num_epochs = num_epochs
         self.criterion = nn.CrossEntropyLoss().to(self.device)  # send the loss computation to the GPU
