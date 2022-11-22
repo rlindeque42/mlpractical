@@ -384,11 +384,11 @@ class ConvProcessBlockBatchNorm(nn.Module):
 
         out = self.layer_dict['conv_0'].forward(out)
         # The batch norm is implemented in the activation function
-        out = F.leaky_relu(self.conv0_bn(x))
+        out = F.leaky_relu(self.conv0_bn(out))
 
         out = self.layer_dict['conv_1'].forward(out)
         # The batch norm is implemented in the activation function
-        out = F.leaky_relu(self.conv1_bn(x))
+        out = F.leaky_relu(self.conv1_bn(out))
 
         return out
 
