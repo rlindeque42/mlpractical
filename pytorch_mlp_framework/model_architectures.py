@@ -366,7 +366,7 @@ class ConvProcessBlockBatchNorm(nn.Module):
 
         out = self.layer_dict['conv_0'].forward(out)
         
-        out = F.leaky_relu(self.conv0_bn(x))
+        out = F.leaky_relu(self.conv0_bn(out))
 
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
@@ -375,7 +375,7 @@ class ConvProcessBlockBatchNorm(nn.Module):
         self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
 
         out = self.layer_dict['conv_1'].forward(out)
-        out = F.leaky_relu(self.conv1_bn(x))
+        out = F.leaky_relu(self.conv1_bn(out))
 
         print(out.shape)
 
@@ -435,13 +435,13 @@ class ConvDimReducBlockBatchNorm(nn.Module):
         out = x
 
         out = self.layer_dict['conv_0'].forward(out)
-        out = F.leaky_relu(self.conv0_bn(x))
+        out = F.leaky_relu(self.conv0_bn(out))
 
         out = F.avg_pool2d(out, self.reduction_factor)
 
         out = self.layer_dict['conv_1'].forward(out)
         out = F.leaky_relu(out)
-        out = F.leaky_relu(self.conv1_bn(x))
+        out = F.leaky_relu(self.conv1_bn(out))
 
         return out
 
@@ -472,7 +472,7 @@ class ConvProcessBlockBNRC(nn.Module):
 
         out = self.layer_dict['conv_0'].forward(out)
         
-        out = F.leaky_relu(self.conv0_bn(x))
+        out = F.leaky_relu(self.conv0_bn(out))
 
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
@@ -481,7 +481,7 @@ class ConvProcessBlockBNRC(nn.Module):
         self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
 
         out = self.layer_dict['conv_1'].forward(out)
-        out = F.leaky_relu(self.conv1_bn(x))
+        out = F.leaky_relu(self.conv1_bn(out))
 
         print(out.shape)
 
@@ -490,11 +490,11 @@ class ConvProcessBlockBNRC(nn.Module):
         # start skip connections
         out = self.layer_dict['conv_0'].forward(out)
         # The batch norm 
-        out = F.leaky_relu(self.conv0_bn(x))
+        out = F.leaky_relu(self.conv0_bn(out))
 
         out = self.layer_dict['conv_1'].forward(out)
         # end skip connections
-        out = F.leaky_relu(self.conv1_bn(x))
+        out = F.leaky_relu(self.conv1_bn(out))
 
         return out
 
@@ -541,13 +541,12 @@ class ConvDimReducBlockBNRC(nn.Module):
         out = x
 
         out = self.layer_dict['conv_0'].forward(out)
-        out = F.leaky_relu(self.conv0_bn(x))
+        out = F.leaky_relu(self.conv0_bn(out))
 
         out = F.avg_pool2d(out, self.reduction_factor)
 
         out = self.layer_dict['conv_1'].forward(out)
-        out = F.leaky_relu(out)
-        out = F.leaky_relu(self.conv1_bn(x))
+        out = F.leaky_relu(self.conv1_bn(out))
 
         return out
 
