@@ -159,17 +159,14 @@ class ExperimentBuilder(nn.Module):
             if(para.requires_grad) and ("bias" not in name):
                 # Splitting the name by '.' so that I can only store the useful parts for the label
                 names = name.split(".")
-                print(names)
                 # Names must have 'layer_dict' removed to make the label more concise
                 while 'layer_dict' in names:
                     names.remove('layer_dict')
-                    print(names)
 
                 # Removing 'weight'
                 names.remove('weight')
                 # Adding the names of these parameters to layers
                 layers.append("_".join(names))
-                print(layers)
                 # And the absolute mean of these parameters to all_grads
                 all_grads.append(para.grad.abs().mean())
         ########################################
