@@ -161,16 +161,13 @@ class ExperimentBuilder(nn.Module):
                 names = name.split(".")
                 print(names)
                 # Names must have 'layer_dict' removed to make the label more concise
-                if 'layer_dict' in names:
+                while 'layer_dict' in names:
                     names.remove('layer_dict')
                     print(names)
-                    # Adding the names of these parameters to layers
-                    layers.append("_".join(names))
-                    print(layers)
-                # One of the layers does not contain 'layer_dict' 
-                else:
-                    layers.append("_".join(names))
 
+                # Adding the names of these parameters to layers
+                layers.append("_".join(names))
+                print(layers)
                 # And the absolute mean of these parameters to all_grads
                 all_grads.append(para.grad.abs().mean())
         ########################################
