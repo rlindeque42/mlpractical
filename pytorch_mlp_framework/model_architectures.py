@@ -344,7 +344,7 @@ class ConvProcessBlockBatchNorm(nn.Module):
     This convolutional block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
     """
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
-        super(ConvolutionalProcessingBlock, self).__init__()
+        super(ConvProcessBlockBatchNorm, self).__init__()
 
         self.num_filters = num_filters
         self.kernel_size = kernel_size
@@ -392,7 +392,7 @@ class ConvProcessBlockBatchNorm(nn.Module):
         out = F.leaky_relu(self.conv0_bn(out))
 
         out = self.layer_dict['conv_1'].forward(out)
-        
+
         # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv1_bn(out))
 
@@ -401,7 +401,7 @@ class ConvProcessBlockBatchNorm(nn.Module):
 
 class ConvDimReducBlockBatchNorm(nn.Module):
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
-        super(ConvolutionalDimensionalityReductionBlock, self).__init__()
+        super(ConvDimReducBlockBatchNorm, self).__init__()
 
         self.num_filters = num_filters
         self.kernel_size = kernel_size
@@ -453,7 +453,7 @@ class ConvDimReducBlockBatchNorm(nn.Module):
 
 class ConvProcessBlockBNRC(nn.Module):
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
-        super(ConvolutionalProcessingBlock, self).__init__()
+        super(ConvProcessBlockBNRC, self).__init__()
 
         self.num_filters = num_filters
         self.kernel_size = kernel_size
@@ -507,7 +507,7 @@ class ConvProcessBlockBNRC(nn.Module):
 
 class ConvDimReducBlockBNRC(nn.Module):
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
-        super(ConvolutionalDimensionalityReductionBlock, self).__init__()
+        super(ConvDimReducBlockBNRC, self).__init__()
 
         self.num_filters = num_filters
         self.kernel_size = kernel_size
