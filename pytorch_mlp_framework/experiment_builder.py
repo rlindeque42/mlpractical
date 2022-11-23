@@ -165,6 +165,8 @@ class ExperimentBuilder(nn.Module):
                     names.remove('layer_dict')
                     print(names)
 
+                # Removing 'weight'
+                names.remove('weight')
                 # Adding the names of these parameters to layers
                 layers.append("_".join(names))
                 print(layers)
