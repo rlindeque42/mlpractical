@@ -161,6 +161,7 @@ class ExperimentBuilder(nn.Module):
             if(para.requires_grad) and ("bias" not in name):
                 # Splitting the name by '.' so that I can only store the useful parts for the label
                 names = name.split(".")
+                print(names)
                 # Adding the names of these parameters to layers
                 layers.append(str(names[1]+"_"+names[2]))
                 # And the absolute mean of these parameters to all_grads
