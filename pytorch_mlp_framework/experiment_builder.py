@@ -157,13 +157,19 @@ class ExperimentBuilder(nn.Module):
         # Running through the names and parameters in named_parmeters
         for name, para in named_parameters:
 
-            # If the parameter had a gradient 
+            # If the parameter had a gradient and is not a bias layer, we get the name and average gradient
             if(para.requires_grad) and ("bias" not in name):
                 # Splitting the name by '.' so that I can only store the useful parts for the label
                 names = name.split(".")
-                print(names)
-                # Adding the names of these parameters to layers
-                layers.append(str(names[1]+"_"+names[2]))
+
+                # Names must have 'layer_dict' removed to make the label more concise
+                if 'layer_dict' in names:
+                    # Adding the names of these parameters to layers
+                    layers.append(str(names[1]+"_"+names[2]))
+                # One of the layers does not contain 'layer_dict' 
+                else:
+                    layers.append("_".join(names))
+
                 # And the absolute mean of these parameters to all_grads
                 all_grads.append(para.grad.abs().mean())
         ########################################
