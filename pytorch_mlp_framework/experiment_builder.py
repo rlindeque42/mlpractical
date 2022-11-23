@@ -159,12 +159,14 @@ class ExperimentBuilder(nn.Module):
             if(para.requires_grad) and ("bias" not in name):
                 # Splitting the name by '.' so that I can only store the useful parts for the label
                 names = name.split(".")
-
+                print(names)
                 # Names must have 'layer_dict' removed to make the label more concise
                 if 'layer_dict' in names:
                     names.remove('layer_dict')
+                    print(names)
                     # Adding the names of these parameters to layers
                     layers.append("_".join(names))
+                    print(layers)
                 # One of the layers does not contain 'layer_dict' 
                 else:
                     layers.append("_".join(names))
