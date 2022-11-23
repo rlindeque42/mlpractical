@@ -49,8 +49,6 @@ class ExperimentBuilder(nn.Module):
             self.device = torch.device('cpu')  # sets the device to be CPU
             print(self.device)
 
-        print('here')
-
         self.model.reset_parameters()  # re-initialize network parameters
         self.train_data = train_data
         self.val_data = val_data
@@ -164,8 +162,9 @@ class ExperimentBuilder(nn.Module):
 
                 # Names must have 'layer_dict' removed to make the label more concise
                 if 'layer_dict' in names:
+                    names.remove('layer_dict')
                     # Adding the names of these parameters to layers
-                    layers.append(str(names[1]+"_"+names[2]))
+                    layers.append("_".join(names))
                 # One of the layers does not contain 'layer_dict' 
                 else:
                     layers.append("_".join(names))
