@@ -440,11 +440,15 @@ class ConvDimReducBlockBatchNorm(nn.Module):
 
         out = self.layer_dict['conv_1'].forward(out)
         out = F.leaky_relu(out)
+        self.downsample = downsample
 
         print(out.shape)
 
     def forward(self, x):
         out = x
+
+        if(self.downsample is not None):
+            residual = downsample(x)
 
         out = self.layer_dict['conv_0'].forward(out)
          # The batch norm is implemented in the activation function
@@ -454,7 +458,7 @@ class ConvDimReducBlockBatchNorm(nn.Module):
 
         out = self.layer_dict['conv_1'].forward(out)
          # The batch norm is implemented in the activation function
-        out = F.leaky_relu(self.conv1_bn(out))
+        out = F.leaky_relu(self.conv1_bn(out) + residual)
 
         return out
 
