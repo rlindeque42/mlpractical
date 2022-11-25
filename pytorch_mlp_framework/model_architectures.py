@@ -451,18 +451,22 @@ class ConvDimReducBlockBatchNorm(nn.Module):
             residual = downsample(x)
 
         out = self.layer_dict['conv_0'].forward(out)
-         # The batch norm is implemented in the activation function
+        # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv0_bn(out))
 
         out = F.avg_pool2d(out, self.reduction_factor)
 
         out = self.layer_dict['conv_1'].forward(out)
-         # The batch norm is implemented in the activation function
+        # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv1_bn(out) + residual)
 
         return out
 
 class ConvProcessBlockBNRC(nn.Module):
+    """
+    This convolutional process block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    It then has skip connections are applied from before the convolution layer to before the final activation function of the block.
+    """
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
         super(ConvProcessBlockBNRC, self).__init__()
 
@@ -498,25 +502,33 @@ class ConvProcessBlockBNRC(nn.Module):
         self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
 
         out = self.layer_dict['conv_1'].forward(out)
-        out = F.leaky_relu(self.conv1_bn(out))
+        # Before the final activation function, the original input is added
+        # This is the skip connections
+        out = F.leaky_relu(self.conv1_bn(out) + x)
 
         print(out.shape)
 
     def forward(self, x):
         out = x
-        # start skip connections
+
         out = self.layer_dict['conv_0'].forward(out)
-        # The batch norm 
+        # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv0_bn(out))
 
         out = self.layer_dict['conv_1'].forward(out)
-        # end skip connections
-        out = F.leaky_relu(self.conv1_bn(out))
+        # The batch norm is implemented in the activation function
+        # The original input is added to this batch norm, before the activation function is applied
+        # This is the skip connections
+        out = F.leaky_relu(self.conv1_bn(out) + x)
 
         return out
 
 
 class ConvDimReducBlockBNRC(nn.Module):
+    """
+    This convolutional process block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    It then has skip connections are applied from before the convolution layer to before the final activation function of the block.
+    """
     def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
         super(ConvDimReducBlockBNRC, self).__init__()
 
@@ -537,6 +549,7 @@ class ConvDimReducBlockBNRC(nn.Module):
         self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
                                               padding=self.padding, stride=1)
+        # This is the first BatchNorm layer which takes it's number of features as the number of filters
         self.conv0_bn=nn.BatchNorm2d(num_features = self.num_filters)
 
         out = self.layer_dict['conv_0'].forward(out)
@@ -547,10 +560,14 @@ class ConvDimReducBlockBNRC(nn.Module):
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
                                               padding=self.padding, stride=1)
+
+        # And this is the second Batch Norm layer
         self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
 
         out = self.layer_dict['conv_1'].forward(out)
-        out = F.leaky_relu(out)
+        # Before the final activation function, the original input is added
+        # This is the skip connections
+        out = F.leaky_relu(out + x)
 
         print(out.shape)
 
@@ -558,12 +575,16 @@ class ConvDimReducBlockBNRC(nn.Module):
         out = x
 
         out = self.layer_dict['conv_0'].forward(out)
+        # The batch norm is implemented in the activation function
         out = F.leaky_relu(self.conv0_bn(out))
 
         out = F.avg_pool2d(out, self.reduction_factor)
 
         out = self.layer_dict['conv_1'].forward(out)
-        out = F.leaky_relu(self.conv1_bn(out))
+        # The batch norm is implemented in the activation function
+        # The original input is added to this batch norm, before the activation function is applied
+        # This is the skip connections
+        out = F.leaky_relu(self.conv1_bn(out) + x)
 
         return out
 
