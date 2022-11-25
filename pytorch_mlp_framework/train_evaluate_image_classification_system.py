@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 import mlp.data_providers as data_providers
-from pytorch_mlp_framework.arg_extractor import get_args
+from arg_extractor import get_args
 from experiment_builder import ExperimentBuilder
 from model_architectures import *
 import os 
