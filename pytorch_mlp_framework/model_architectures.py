@@ -556,6 +556,8 @@ class ConvDimReducBlockBNRC(nn.Module):
         out = F.leaky_relu(out)
 
         out = F.avg_pool2d(out, self.reduction_factor)
+        # To ensure the skip connections are the same size when added at the end, they must also go through the average pooling layer
+        skip_connect = F.avg_pool2d(x, self.reduction_factor)
 
         self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
                                               kernel_size=self.kernel_size, dilation=self.dilation,
@@ -567,7 +569,7 @@ class ConvDimReducBlockBNRC(nn.Module):
         out = self.layer_dict['conv_1'].forward(out)
         # Before the final activation function, the original input is added
         # This is the skip connections
-        out = F.leaky_relu(out + x)
+        out = F.leaky_relu(out + skip_connect)
 
         print(out.shape)
 
@@ -579,12 +581,14 @@ class ConvDimReducBlockBNRC(nn.Module):
         out = F.leaky_relu(self.conv0_bn(out))
 
         out = F.avg_pool2d(out, self.reduction_factor)
+        # To ensure the skip connections are the same size when added at the end, they must also go through the average pooling layer
+        skip_connect = F.avg_pool2d(x, self.reduction_factor)
 
         out = self.layer_dict['conv_1'].forward(out)
         # The batch norm is implemented in the activation function
         # The original input is added to this batch norm, before the activation function is applied
         # This is the skip connections
-        out = F.leaky_relu(self.conv1_bn(out) + x)
+        out = F.leaky_relu(self.conv1_bn(out) + skip_connect)
 
         return out
 
