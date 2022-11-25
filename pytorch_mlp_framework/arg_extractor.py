@@ -44,7 +44,7 @@ def get_args():
     parser.add_argument('--use_gpu', nargs="?", type=str2bool, default=True,
                         help='A flag indicating whether we will use GPU acceleration or not')
     parser.add_argument('--lr', nargs="?", type=float, default=0.001,
-                        help='The learning rate for the adam optimizer')
+                        help='The learning rate for the adam optimizer') # I have added Learning Rate as an argument for train_eval..
     parser.add_argument('--weight_decay_coefficient', nargs="?", type=float, default=0,
                         help='Weight decay to use for Adam')
     parser.add_argument('--block_type', type=str, default='conv_block',

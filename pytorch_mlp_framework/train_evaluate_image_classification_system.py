@@ -64,12 +64,12 @@ custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in thi
     dimensionality_reduction_block_type=dim_reduction_block_type)
 
 conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
+                                    lr = args.lr, # Here I have added in the learning rate to be passed into Experiment Builder
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
                                     weight_decay_coefficient=args.weight_decay_coefficient,
                                     use_gpu=args.use_gpu,
                                     continue_from_epoch=args.continue_from_epoch,
                                     train_data=train_data_loader, val_data=val_data_loader,
-                                    test_data=test_data_loader, 
-                                    lr = args.lr)  # build an experiment object
+                                    test_data=test_data_loader)  # build an experiment object
 experiment_metrics, test_metrics = conv_experiment.run_experiment()  # run experiment and return experiment metrics
