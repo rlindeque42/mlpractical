@@ -77,8 +77,7 @@ for key, value in result_dict_BN.items():
     print(key, list(value.keys()))
 print(result_dict_BN['VGG_38_batch_norm']['train_loss'])
 plot_result_graphs('figure4_BN', result_dict_BN, name='VGG_38_batch_norm')
-"""
+
 experiment_dir = 'VGG_38_BNRC'
 result_dict_BN = collect_experiment_dicts(target_dir=experiment_dir)
 plot_result_graphs('figure4_BNRC', result_dict_BN, name='VGG_38_BNRC')
-"""
