@@ -338,3 +338,258 @@ class ConvolutionalNetwork(nn.Module):
                 pass
 
         self.logit_linear_layer.reset_parameters()
+
+class ConvProcessBlockBatchNorm(nn.Module):
+    """
+    This convolutional process block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    """
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
+        super(ConvProcessBlockBatchNorm, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+        # This is the first BatchNorm layer which takes it's number of features as the number of filters
+        self.conv0_bn=nn.BatchNorm2d(num_features = self.num_filters)
+        
+        out = self.layer_dict['conv_0'].forward(out)
+        
+        out = F.leaky_relu(self.conv0_bn(out))
+
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        # And this is the second Batch Norm layer
+        self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
+
+        out = self.layer_dict['conv_1'].forward(out)
+
+        out = F.leaky_relu(self.conv1_bn(out))
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'].forward(out)
+
+        # The batch norm is implemented in the activation function
+        out = F.leaky_relu(self.conv0_bn(out))
+
+        out = self.layer_dict['conv_1'].forward(out)
+
+        # The batch norm is implemented in the activation function
+        out = F.leaky_relu(self.conv1_bn(out))
+
+        return out
+
+
+class ConvDimReducBlockBatchNorm(nn.Module):
+    """
+    This convolutional reduction block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    """
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
+        super(ConvDimReducBlockBatchNorm, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+        self.reduction_factor = reduction_factor
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+        # This is the first BatchNorm layer which takes it's number of features as the number of filters
+        self.conv0_bn=nn.BatchNorm2d(num_features = self.num_filters)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = F.leaky_relu(out)
+
+        out = F.avg_pool2d(out, self.reduction_factor)
+
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        # And this is the second Batch Norm layer
+        self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        out = F.leaky_relu(out)
+        self.downsample = downsample
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        if(self.downsample is not None):
+            residual = downsample(x)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        # The batch norm is implemented in the activation function
+        out = F.leaky_relu(self.conv0_bn(out))
+
+        out = F.avg_pool2d(out, self.reduction_factor)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        # The batch norm is implemented in the activation function
+        out = F.leaky_relu(self.conv1_bn(out) + residual)
+
+        return out
+
+class ConvProcessBlockBNRC(nn.Module):
+    """
+    This convolutional process block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    It then has skip connections are applied from before the convolution layer to before the final activation function of the block.
+    """
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation):
+        super(ConvProcessBlockBNRC, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+        # This is the first BatchNorm layer which takes it's number of features as the number of filters
+        self.conv0_bn=nn.BatchNorm2d(num_features = self.num_filters)
+        
+
+        out = self.layer_dict['conv_0'].forward(out)
+        
+        out = F.leaky_relu(self.conv0_bn(out))
+
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+        # And this is the second Batch Norm layer
+        self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        # Before the final activation function, the original input is added
+        # This is the skip connections
+        out = F.leaky_relu(self.conv1_bn(out) + x)
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'].forward(out)
+        # The batch norm is implemented in the activation function
+        out = F.leaky_relu(self.conv0_bn(out))
+
+        out = self.layer_dict['conv_1'].forward(out)
+        # The batch norm is implemented in the activation function
+        # The original input is added to this batch norm, before the activation function is applied
+        # This is the skip connections
+        out = F.leaky_relu(self.conv1_bn(out) + x)
+
+        return out
+
+
+class ConvDimReducBlockBNRC(nn.Module):
+    """
+    This convolutional process block has a batch norm layer implemented after the first convolutional layer and after the second convolutional layer.
+    It then has skip connections are applied from before the convolution layer to before the final activation function of the block.
+    """
+    def __init__(self, input_shape, num_filters, kernel_size, padding, bias, dilation, reduction_factor):
+        super(ConvDimReducBlockBNRC, self).__init__()
+
+        self.num_filters = num_filters
+        self.kernel_size = kernel_size
+        self.input_shape = input_shape
+        self.padding = padding
+        self.bias = bias
+        self.dilation = dilation
+        self.reduction_factor = reduction_factor
+        self.build_module()
+
+    def build_module(self):
+        self.layer_dict = nn.ModuleDict()
+        x = torch.zeros(self.input_shape)
+        out = x
+
+        self.layer_dict['conv_0'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+        # This is the first BatchNorm layer which takes it's number of features as the number of filters
+        self.conv0_bn=nn.BatchNorm2d(num_features = self.num_filters)
+
+        out = self.layer_dict['conv_0'].forward(out)
+        out = F.leaky_relu(out)
+
+        out = F.avg_pool2d(out, self.reduction_factor)
+        # To ensure the skip connections are the same size when added at the end, they must also go through the average pooling layer
+        skip_connect = F.avg_pool2d(x, self.reduction_factor)
+
+        self.layer_dict['conv_1'] = nn.Conv2d(in_channels=out.shape[1], out_channels=self.num_filters, bias=self.bias,
+                                              kernel_size=self.kernel_size, dilation=self.dilation,
+                                              padding=self.padding, stride=1)
+
+        # And this is the second Batch Norm layer
+        self.conv1_bn=nn.BatchNorm2d(num_features = self.num_filters)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        # Before the final activation function, the original input is added
+        # This is the skip connections
+        out = F.leaky_relu(out + skip_connect)
+
+        print(out.shape)
+
+    def forward(self, x):
+        out = x
+
+        out = self.layer_dict['conv_0'].forward(out)
+        # The batch norm is implemented in the activation function
+        out = F.leaky_relu(self.conv0_bn(out))
+
+        out = F.avg_pool2d(out, self.reduction_factor)
+        # To ensure the skip connections are the same size when added at the end, they must also go through the average pooling layer
+        skip_connect = F.avg_pool2d(x, self.reduction_factor)
+
+        out = self.layer_dict['conv_1'].forward(out)
+        # The batch norm is implemented in the activation function
+        # The original input is added to this batch norm, before the activation function is applied
+        # This is the skip connections
+        out = F.leaky_relu(self.conv1_bn(out) + skip_connect)
+
+        return out
+
+

@@ -13,7 +13,7 @@ import matplotlib
 matplotlib.rcParams.update({'font.size': 8})
 
 class ExperimentBuilder(nn.Module):
-    def __init__(self, network_model, experiment_name, num_epochs, train_data, val_data,
+    def __init__(self, network_model, learn_rate, experiment_name, num_epochs, train_data, val_data,
                  test_data, weight_decay_coefficient, use_gpu, continue_from_epoch=-1):
         """
         Initializes an ExperimentBuilder object. Such an object takes care of running training and evaluation of a deep net
@@ -49,8 +49,6 @@ class ExperimentBuilder(nn.Module):
             self.device = torch.device('cpu')  # sets the device to be CPU
             print(self.device)
 
-        print('here')
-
         self.model.reset_parameters()  # re-initialize network parameters
         self.train_data = train_data
         self.val_data = val_data
@@ -72,7 +70,8 @@ class ExperimentBuilder(nn.Module):
         print('Total number of conv layers', num_conv_layers)
         print('Total number of linear layers', num_linear_layers)
 
-        self.optimizer = optim.Adam(self.parameters(), amsgrad=False,
+        # I've added in the learning rate parameter
+        self.optimizer = optim.Adam(self.parameters(), lr = learn_rate, amsgrad=False,
                                     weight_decay=weight_decay_coefficient)
         self.learning_rate_scheduler = optim.lr_scheduler.CosineAnnealingLR(self.optimizer,
                                                                             T_max=num_epochs,
@@ -112,6 +111,7 @@ class ExperimentBuilder(nn.Module):
             self.starting_epoch = 0
 
     def get_num_parameters(self):
+
         total_num_params = 0
         for param in self.parameters():
             total_num_params += np.prod(param.shape)
@@ -140,7 +140,6 @@ class ExperimentBuilder(nn.Module):
         
         return plt
         
-    
     def plot_grad_flow(self, named_parameters):
         """
         The function is being called in Line 298 of this file. 
@@ -154,18 +153,31 @@ class ExperimentBuilder(nn.Module):
         Complete the code in the block below to collect absolute mean of the gradients for each layer in all_grads with the             layer names in layers.
         """
         ########################################
-        
-        
+        # Running through the names and parameters in named_parmeters
+        for name, para in named_parameters:
+
+            # If the parameter had a gradient and is not a bias layer, we get the name and average gradient
+            if(para.requires_grad) and ("bias" not in name):
+                # Splitting the name by '.' so that I can only store the useful parts for the label
+                names = name.split(".")
+                # Names must have 'layer_dict' removed to make the label more concise
+                while 'layer_dict' in names:
+                    names.remove('layer_dict')
+
+                # Removing 'weight'
+                names.remove('weight')
+                # Adding the names of these parameters to layers
+                layers.append("_".join(names))
+                # And the absolute mean of these parameters to all_grads
+                all_grads.append(para.grad.abs().mean())
         ########################################
             
         
         plt = self.plot_func_def(all_grads, layers)
         
         return plt
-    
-    
-    
-    
+
+
     def run_train_iter(self, x, y):
         
         self.train()  # sets model to training mode (in case batch normalization or other methods have different procedures for training and evaluation)
@@ -232,6 +244,9 @@ class ExperimentBuilder(nn.Module):
         state = torch.load(f=os.path.join(model_save_dir, "{}_{}".format(model_save_name, str(model_idx))))
         self.load_state_dict(state_dict=state['network'])
         return state, state['best_val_model_idx'], state['best_val_model_acc']
+    
+    def run_mini_experiment(self):
+        return (self.testing(self.model.named_parameters()))
 
     def run_experiment(self):
         """
@@ -280,6 +295,7 @@ class ExperimentBuilder(nn.Module):
             epoch_elapsed_time = time.time() - epoch_start_time  # calculate time taken for epoch
             epoch_elapsed_time = "{:.4f}".format(epoch_elapsed_time)
             print("Epoch {}:".format(epoch_idx), out_string, "epoch time", epoch_elapsed_time, "seconds")
+            print("Test")
             self.state['model_epoch'] = epoch_idx
             self.save_model(model_save_dir=self.experiment_saved_models,
                             # save model and best val idx and best val acc, using the model dir, model name and model idx

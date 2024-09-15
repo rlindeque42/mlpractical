@@ -4,9 +4,9 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 import mlp.data_providers as data_providers
-from pytorch_mlp_framework.arg_extractor import get_args
-from pytorch_mlp_framework.experiment_builder import ExperimentBuilder
-from pytorch_mlp_framework.model_architectures import *
+from arg_extractor import get_args
+from experiment_builder import ExperimentBuilder
+from model_architectures import *
 import os 
 # os.environ["CUDA_VISIBLE_DEVICES"]="0"
 
@@ -47,6 +47,12 @@ if args.block_type == 'conv_block':
 elif args.block_type == 'empty_block':
     processing_block_type = EmptyBlock
     dim_reduction_block_type = EmptyBlock
+elif args.block_type == 'batch_norm':
+    processing_block_type = ConvProcessBlockBatchNorm
+    dim_reduction_block_type = ConvDimReducBlockBatchNorm
+elif args.block_type == 'batch_norm_res_net':
+    processing_block_type = ConvProcessBlockBNRC
+    dim_reduction_block_type = ConvDimReducBlockBNRC
 else:
     raise ModuleNotFoundError
 
@@ -58,6 +64,7 @@ custom_conv_net = ConvolutionalNetwork(  # initialize our network object, in thi
     dimensionality_reduction_block_type=dim_reduction_block_type)
 
 conv_experiment = ExperimentBuilder(network_model=custom_conv_net,
+                                    learn_rate= args.lr, # Here I have added in the learning rate to be passed into Experiment Builder
                                     experiment_name=args.experiment_name,
                                     num_epochs=args.num_epochs,
                                     weight_decay_coefficient=args.weight_decay_coefficient,
